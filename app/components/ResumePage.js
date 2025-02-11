@@ -43,8 +43,17 @@ const ResumePage = ({ userData, userRepos, userLangs }) => {
             <p className="w-20 xl:w-40">Website</p>
 
             <p className="w-[250px] md:w-[500px] xl:w-[600px] text-sm">
-              <a href={userData?.blog} target="_blank">
-                {userData?.blog}
+              <a
+                href={
+                  userData?.blog.includes("https://")
+                    ? userData?.blog
+                    : `https://${userData?.blog}`
+                }
+                target="_blank"
+              >
+                {userData?.blog.includes("https://")
+                  ? userData?.blog
+                  : `https://${userData?.blog}`}
               </a>
             </p>
           </div>
