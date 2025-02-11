@@ -37,17 +37,21 @@ const ResumePage = ({ userData, userRepos, userLangs }) => {
 
       <Divider />
 
-      <div className="flex gap-6 md:gap-10">
-        <p className="w-20 xl:w-40">Website</p>
+      {userData?.blog && (
+        <>
+          <div className="flex gap-6 md:gap-10">
+            <p className="w-20 xl:w-40">Website</p>
 
-        <p className="w-[250px] md:w-[500px] xl:w-[600px] text-sm">
-          <a href={userData?.blog} target="_blank">
-            {userData?.blog}
-          </a>
-        </p>
-      </div>
+            <p className="w-[250px] md:w-[500px] xl:w-[600px] text-sm">
+              <a href={userData?.blog} target="_blank">
+                {userData?.blog}
+              </a>
+            </p>
+          </div>
 
-      <Divider />
+          <Divider />
+        </>
+      )}
 
       <div className="flex gap-6 md:gap-10">
         <p className="w-20 xl:w-40">Languages</p>

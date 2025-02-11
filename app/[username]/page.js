@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, use, useState } from "react";
 import ResumePage from "../components/ResumePage";
 import AccountNotFound from "../components/AccountNotFound";
+import ApiLimitation from "../components/ApiLimitation";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 
@@ -12,6 +13,7 @@ const page = ({ params }) => {
   const [userData, setUserData] = useState(null);
   const [userRepos, setUserRepos] = useState(null);
   const [userLangs, setUserLangs] = useState(null);
+  const [error, setError] = useState(false);
 
   const resolvedParams = use(params);
 
@@ -21,14 +23,19 @@ const page = ({ params }) => {
     axios
       .get(`https://api.github.com/users/${resolvedParams.username}`)
       .then((res) => setUserData(res.data))
-      .catch((err) => console.error("Error:", err))
-      .finally(setIsSpinning(false));
+      .catch((err) => {
+        setError(true);
+        setIsSpinning(false);
+      });
     axios
       .get(
         `https://api.github.com/users/${resolvedParams.username}/repos?sort=updated`
       )
       .then((res) => setUserRepos(res.data))
-      .catch((err) => console.error("Error:", err));
+      .catch((err) => {
+        setError(true);
+        setIsSpinning(false);
+      });
   }, [resolvedParams.username]);
 
   const fetchLanguages = async () => {
@@ -57,6 +64,7 @@ const page = ({ params }) => {
       .sort((a, b) => b.percentage - a.percentage);
 
     setUserLangs(languagePercentages);
+    setIsSpinning(false);
   };
 
   useEffect(() => {
@@ -77,7 +85,7 @@ const page = ({ params }) => {
           />
         )}
 
-        {!isSpinning && (
+        {!error && !isSpinning && (
           <>
             {userData ? (
               <ResumePage
@@ -90,6 +98,8 @@ const page = ({ params }) => {
             )}
           </>
         )}
+
+        {error && <ApiLimitation />}
       </main>
     </>
   );
