@@ -17,7 +17,7 @@ export default [
   ]),
   {
     ignores: ["node_modules", "dist", "public", ".next"],
-    plugins: ["unused-imports", "unused-vars"],
+    plugins: ["unused-imports", "unused-vars", "next/core-web-vitals"],
     rules: {
       "unused-imports/no-unused-imports": "error",
       "no-unused-vars": "warn",
