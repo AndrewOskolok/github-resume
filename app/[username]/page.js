@@ -4,8 +4,11 @@ import axios from "axios";
 import { useEffect, use, useState } from "react";
 import ResumePage from "../components/ResumePage";
 import AccountNotFound from "../components/AccountNotFound";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
 
 const page = ({ params }) => {
+  const [isSpinning, setIsSpinning] = useState(true);
   const [userData, setUserData] = useState(null);
   const [userRepos, setUserRepos] = useState(null);
   const [userLangs, setUserLangs] = useState(null);
@@ -18,7 +21,8 @@ const page = ({ params }) => {
     axios
       .get(`https://api.github.com/users/${resolvedParams.username}`)
       .then((res) => setUserData(res.data))
-      .catch((err) => console.error("Error:", err));
+      .catch((err) => console.error("Error:", err))
+      .finally(setIsSpinning(false));
     axios
       .get(
         `https://api.github.com/users/${resolvedParams.username}/repos?sort=updated`
@@ -31,7 +35,7 @@ const page = ({ params }) => {
     let languageStats = {};
 
     await Promise.all(
-      userRepos.map((repo) => {
+      userRepos?.map((repo) => {
         return axios.get(repo.languages_url).then((res) => {
           for (const [lang, bytes] of Object.entries(res.data)) {
             languageStats[lang] = (languageStats[lang] || 0) + bytes;
@@ -56,20 +60,35 @@ const page = ({ params }) => {
   };
 
   useEffect(() => {
-    fetchLanguages();
+    if (userRepos) {
+      fetchLanguages();
+    }
   }, [userRepos]);
 
   return (
     <>
       <main className="p-3 md:p-10 xl:p-20 m-auto max-w-[425px] md:max-w-[768px] xl:max-w-[1024px] bg-lightBackground">
-        {userData ? (
-          <ResumePage
-            userData={userData}
-            userRepos={userRepos}
-            userLangs={userLangs}
+        {isSpinning && (
+          <Spin
+            className="block"
+            spinning={isSpinning}
+            indicator={<LoadingOutlined spin />}
+            size="large"
           />
-        ) : (
-          <AccountNotFound />
+        )}
+
+        {!isSpinning && (
+          <>
+            {userData ? (
+              <ResumePage
+                userData={userData}
+                userRepos={userRepos}
+                userLangs={userLangs}
+              />
+            ) : (
+              <AccountNotFound />
+            )}
+          </>
         )}
       </main>
     </>
