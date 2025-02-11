@@ -23,3 +23,7 @@ body {
   background: var(--background);
   font-family: Roboto, Arial, sans-serif;
 }
+
+a {
+  color: var(--green);
+}

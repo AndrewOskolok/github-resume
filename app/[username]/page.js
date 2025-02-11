@@ -1,14 +1,78 @@
-import { notFound } from "next/navigation";
+"use client";
 
-const page = async ({ params }) => {
-  const resolvedParams = await params;
+import axios from "axios";
+import { useEffect, use, useState } from "react";
+import ResumePage from "../components/ResumePage";
+import AccountNotFound from "../components/AccountNotFound";
 
-  if (!resolvedParams?.username) return notFound();
+const page = ({ params }) => {
+  const [userData, setUserData] = useState(null);
+  const [userRepos, setUserRepos] = useState(null);
+  const [userLangs, setUserLangs] = useState(null);
+
+  const resolvedParams = use(params);
+
+  useEffect(() => {
+    if (!resolvedParams?.username) return;
+
+    axios
+      .get(`https://api.github.com/users/${resolvedParams.username}`)
+      .then((res) => setUserData(res.data))
+      .catch((err) => console.error("Error:", err));
+    axios
+      .get(
+        `https://api.github.com/users/${resolvedParams.username}/repos?sort=updated`
+      )
+      .then((res) => setUserRepos(res.data))
+      .catch((err) => console.error("Error:", err));
+  }, [resolvedParams.username]);
+
+  const fetchLanguages = async () => {
+    let languageStats = {};
+
+    await Promise.all(
+      userRepos.map((repo) => {
+        return axios.get(repo.languages_url).then((res) => {
+          for (const [lang, bytes] of Object.entries(res.data)) {
+            languageStats[lang] = (languageStats[lang] || 0) + bytes;
+          }
+        });
+      })
+    );
+
+    const totalBytes = Object.values(languageStats).reduce(
+      (sum, bytes) => sum + bytes,
+      0
+    );
+
+    const languagePercentages = Object.entries(languageStats)
+      .map(([lang, bytes]) => ({
+        language: lang,
+        percentage: ((bytes / totalBytes) * 100).toFixed(2),
+      }))
+      .sort((a, b) => b.percentage - a.percentage);
+
+    setUserLangs(languagePercentages);
+  };
+
+  useEffect(() => {
+    fetchLanguages();
+  }, [userRepos]);
 
   return (
-    <div>
-      <h1>Динамічний роут: {resolvedParams.username}</h1>
-    </div>
+    <>
+      <main className="p-3 md:p-10 xl:p-20 m-auto max-w-[425px] md:max-w-[768px] xl:max-w-[1024px] bg-lightBackground">
+        {userData ? (
+          <ResumePage
+            userData={userData}
+            userRepos={userRepos}
+            userLangs={userLangs}
+          />
+        ) : (
+          <AccountNotFound />
+        )}
+      </main>
+    </>
   );
 };
 
