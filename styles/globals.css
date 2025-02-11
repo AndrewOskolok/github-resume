@@ -7,14 +7,10 @@
 
 :root {
   --background: rgb(23, 27, 9);
-  --dark-background: rgb(42, 46, 28);
-  --lightBackground: rgb(35, 39, 21);
-  --grayBackground: rgb(38, 38, 38);
-  --purpleBackground: rgb(133, 79, 255);
-  --primary: rgb(255, 255, 255);
-  --secondary: rgb(0, 0, 0);
-  --lightGreen: rgb(184, 246, 33);
-  --successfulGreen: rgb(134, 198, 87);
+  --lightBackground: rgb(235, 235, 234);
+  --primary: rgb(55, 55, 55);
+  --secondary: rgb(200, 200, 200);
+  --green: rgb(134, 198, 87);
 }
 
 html {

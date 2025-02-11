@@ -15,14 +15,10 @@ export default {
     extend: {
       colors: {
         background: "var(--background)",
-        darkBackground: "var(--dark-background)",
         lightBackground: "var(--lightBackground)",
-        grayBackground: "var(--grayBackground)",
-        purpleBackground: "var(--purpleBackground)",
         primary: "var(--primary)",
         secondary: "var(--secondary)",
-        lightGreen: "var(--lightGreen)",
-        successfulGreen: "var(--successfulGreen)",
+        green: "var(--green)",
       },
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],
